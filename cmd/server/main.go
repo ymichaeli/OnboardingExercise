@@ -2,16 +2,13 @@ package main
 
 import (
 	"OnboardingExercise/pkg/api"
+	"github.com/pkg/errors"
 )
 
 func main() {
-	server, err := api.NewServer()
+	server := api.NewServer()
 
-	if err != nil {
-		panic("Couldn't create server")
-	}
-
-	if err = server.Start(); err != nil {
-		panic("Couldn't start server")
+	if err := server.Start(); err != nil {
+		panic(errors.WithStack(errors.Wrap(err, "Couldn't start server")))
 	}
 }

@@ -5,13 +5,14 @@ import (
 )
 
 type Router struct {
+	handler Handler
 }
 
-func NewRoute() Router {
-	return Router{}
+func NewRouter(handler Handler) Router {
+	return Router{handler: handler}
 }
 
 func (r Router) InitRoutes(engine *gin.Engine) {
-	engine.GET("/is-alive", r.health)
-	engine.GET("/is-ready", r.readiness)
+	engine.GET("/is-alive", r.handler.health)
+	engine.GET("/is-ready", r.handler.readiness)
 }

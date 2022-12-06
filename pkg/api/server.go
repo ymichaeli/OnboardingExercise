@@ -1,6 +1,12 @@
 package api
 
 import (
+	"OnboardingExercise/pkg/api/lifecycle"
+	"OnboardingExercise/pkg/api/middlewares"
+	"OnboardingExercise/pkg/api/profile"
+	"OnboardingExercise/pkg/repository/profile"
+	"OnboardingExercise/pkg/service/lifecycle"
+	"OnboardingExercise/pkg/service/profile"
 	"github.com/gin-gonic/gin"
 )
 
@@ -8,14 +14,14 @@ type Server struct {
 	engine *gin.Engine
 }
 
-func NewServer() (Server, error) {
+func NewServer() Server {
 	engine := gin.New()
 	server := Server{engine}
 
 	server.initMiddlewares()
 	server.initRoutes()
 
-	return server, nil
+	return server
 }
 
 func (server Server) Start() error {
@@ -23,7 +29,13 @@ func (server Server) Start() error {
 }
 
 func (server Server) initRoutes() {
-	routes := GetRoutes()
+	lifecycleHandler := lifecycle.NewHandler(lifecycle_service.NewService())
+	profileHandler := profile.NewHandler(profile_service.NewService(profile_repository.NewDAL(profile_repository.Profiles)))
+
+	routes := []Router{
+		lifecycle.NewRouter(lifecycleHandler),
+		profile.NewRouter(profileHandler),
+	}
 
 	for _, route := range routes {
 		route.InitRoutes(server.engine)
@@ -33,4 +45,5 @@ func (server Server) initRoutes() {
 func (server Server) initMiddlewares() {
 	server.engine.Use(gin.Logger())
 	server.engine.Use(gin.Recovery())
+	server.engine.Use(middlewares.ErrorHandler)
 }
