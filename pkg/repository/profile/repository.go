@@ -13,7 +13,7 @@ type Repository struct {
 	profiles []Profile // will be changed to db client
 }
 
-func NewDAL(profiles []Profile) Repository {
+func NewRepository(profiles []Profile) Repository {
 	return Repository{profiles: profiles}
 }
 
@@ -28,7 +28,7 @@ func (repository *Repository) GetProfileByUserID(userId string) (Profile, error)
 		}
 	}
 
-	return Profile{}, custom_errors.NotFoundError{Err: fmt.Sprintf("user %s does not exist", userId)}
+	return Profile{}, custom_errors.NewNotFoundError(fmt.Sprintf("user %s does not exist", userId), "")
 }
 
 func (repository *Repository) CreateProfile(newProfile Profile) {
@@ -42,5 +42,5 @@ func (repository *Repository) UpdateProfile(updatedProfile Profile) error {
 			return nil
 		}
 	}
-	return custom_errors.NotFoundError{Err: fmt.Sprintf("user %s does not exist", updatedProfile.UserId)}
+	return custom_errors.NewNotFoundError(fmt.Sprintf("user %s does not exist", updatedProfile.UserId), "")
 }

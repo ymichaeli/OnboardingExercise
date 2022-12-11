@@ -27,7 +27,7 @@ func (suite *MiddlewareTestSuite) TestRegularError() {
 	suite.Context.Request = req
 
 	handler := NewHandler(lifecycle_service.NewService())
-	handler.health(suite.Context)
+	handler.Health(suite.Context)
 
 	assert.Equal(suite.T(), http.StatusOK, suite.Recorder.Code)
 	assert.Equal(suite.T(), `{"status":"ok"}`, suite.Recorder.Body.String())

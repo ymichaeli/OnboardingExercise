@@ -1,13 +1,14 @@
-package profile
+package profile_api
 
 import (
+	"OnboardingExercise/pkg/api/models"
 	"OnboardingExercise/pkg/custom_errors"
-	"OnboardingExercise/pkg/repository/profile"
 	"OnboardingExercise/pkg/service/profile"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
+// Handler implements profiles CRUD functions using profile_service.Service
 type Handler struct {
 	service profile_service.Service
 }
@@ -23,8 +24,11 @@ func (handler *Handler) GetAllProfiles(c *gin.Context) {
 }
 
 func (handler *Handler) GetProfileByUserID(c *gin.Context) {
-	userId := c.Param("userId")
-	userProfile, err := handler.service.GetProfileByUserID(userId)
+	var params api_models.ProfileUserParams
+	if err := c.ShouldBindUri(&params); err != nil {
+		_ = c.Error(custom_errors.NewBadRequestError(err.Error(), ""))
+	}
+	userProfile, err := handler.service.GetProfileByUserID(params.UserId)
 
 	if err != nil {
 		_ = c.Error(err)
@@ -35,26 +39,30 @@ func (handler *Handler) GetProfileByUserID(c *gin.Context) {
 }
 
 func (handler *Handler) CreateProfile(c *gin.Context) {
-	var newProfile profile_repository.Profile
+	var newProfile api_models.Profile
 	if err := c.ShouldBind(&newProfile); err != nil {
-		_ = c.Error(custom_errors.BadRequestError{Err: err.Error()})
+		_ = c.Error(custom_errors.NewBadRequestError(err.Error(), ""))
 		return
 	}
 
-	newProfile = handler.service.CreateProfile(newProfile)
-	c.JSON(http.StatusCreated, newProfile)
+	createdProfile := handler.service.CreateProfile(newProfile)
+	c.JSON(http.StatusCreated, createdProfile)
 
 }
 
 func (handler *Handler) UpdateProfile(c *gin.Context) {
-	var newProfile profile_repository.Profile
+	var newProfile api_models.Profile
 	if err := c.ShouldBind(&newProfile); err != nil {
-		_ = c.Error(custom_errors.BadRequestError{Err: err.Error()})
+		_ = c.Error(custom_errors.NewBadRequestError(err.Error(), ""))
 		return
 	}
-	newProfile.UserId = c.Param("userId")
 
-	if err := handler.service.UpdateProfile(newProfile); err != nil {
+	var params api_models.ProfileUserParams
+	if err := c.ShouldBindUri(&params); err != nil {
+		_ = c.Error(custom_errors.NewBadRequestError(err.Error(), ""))
+	}
+
+	if err := handler.service.UpdateProfile(newProfile, params.UserId); err != nil {
 		_ = c.Error(err)
 		return
 	}

@@ -1,4 +1,4 @@
-package profile
+package profile_api
 
 import (
 	"github.com/gin-gonic/gin"

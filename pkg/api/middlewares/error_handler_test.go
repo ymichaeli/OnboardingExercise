@@ -5,44 +5,34 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/suite"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 )
 
-type MiddlewareTestSuite struct {
-	suite.Suite
-	Recorder *httptest.ResponseRecorder
-	Context  *gin.Context
+func TestRegularError(t *testing.T) {
+	errorMessage := "some error"
+	err := errors.New(errorMessage)
+
+	status, _ := HandleError(err)
+
+	assert.Equal(t, http.StatusInternalServerError, status)
 }
 
-func (suite *MiddlewareTestSuite) SetupTest() {
-	suite.Recorder = httptest.NewRecorder()
-	suite.Context, _ = gin.CreateTestContext(suite.Recorder)
+func TestNotFoundError(t *testing.T) {
+	publicMessage := "didn't found myResource"
+	err := custom_errors.NewNotFoundError(publicMessage, "")
+
+	status, _ := HandleError(err)
+
+	assert.Equal(t, http.StatusNotFound, status)
 }
 
-func (suite *MiddlewareTestSuite) TestRegularError() {
-	suite.Context.Errors[0] = suite.Context.Error(errors.New("some error"))
-	ErrorHandler(suite.Context)
+func TestBadRequestError(t *testing.T) {
+	publicMessage := "field Bio is required"
+	err := custom_errors.NewBadRequestError(publicMessage, "")
 
-	assert.Equal(suite.T(), http.StatusInternalServerError, suite.Recorder.Result().StatusCode)
-}
+	status, message := HandleError(err)
 
-func (suite *MiddlewareTestSuite) TestNotFoundError() {
-	suite.Context.Errors[0] = suite.Context.Error(custom_errors.NotFoundError{Err: "not found"})
-	ErrorHandler(suite.Context)
-
-	assert.Equal(suite.T(), http.StatusNotFound, suite.Recorder.Result().StatusCode)
-}
-
-func (suite *MiddlewareTestSuite) TestBadRequestError() {
-	suite.Context.Errors[0] = suite.Context.Error(custom_errors.BadRequestError{Err: "bad request"})
-	ErrorHandler(suite.Context)
-
-	assert.Equal(suite.T(), http.StatusBadRequest, suite.Recorder.Result().StatusCode)
-}
-
-func TestExampleTestSuite(t *testing.T) {
-	suite.Run(t, new(MiddlewareTestSuite))
+	assert.Equal(t, http.StatusBadRequest, status)
+	assert.Equal(t, gin.H{"error": publicMessage}, message)
 }

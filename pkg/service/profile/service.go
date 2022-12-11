@@ -1,10 +1,12 @@
 package profile_service
 
 import (
+	"OnboardingExercise/pkg/api/models"
 	"OnboardingExercise/pkg/repository/profile"
 	"github.com/google/uuid"
 )
 
+// Service implements CRUD functions for profiles connection between the handler and the repository
 type Service struct {
 	repository profile_repository.Repository
 }
@@ -21,13 +23,26 @@ func (service *Service) GetProfileByUserID(userId string) (profile_repository.Pr
 	return service.repository.GetProfileByUserID(userId)
 }
 
-func (service *Service) CreateProfile(newProfile profile_repository.Profile) profile_repository.Profile {
-	newProfile.UserId = uuid.New().String()
-	service.repository.CreateProfile(newProfile)
+func (service *Service) CreateProfile(newProfile api_models.Profile) profile_repository.Profile {
+	profileToCreate := profile_repository.Profile{
+		UserId:        uuid.New().String(),
+		UserName:      newProfile.UserName,
+		FullName:      newProfile.FullName,
+		Bio:           newProfile.Bio,
+		ProfilePicURL: newProfile.ProfilePicURL,
+	}
 
-	return newProfile
+	service.repository.CreateProfile(profileToCreate)
+
+	return profileToCreate
 }
 
-func (service *Service) UpdateProfile(updatedProfile profile_repository.Profile) error {
-	return service.repository.UpdateProfile(updatedProfile)
+func (service *Service) UpdateProfile(updatedProfile api_models.Profile, userId string) error {
+	return service.repository.UpdateProfile(profile_repository.Profile{
+		UserId:        userId,
+		UserName:      updatedProfile.UserName,
+		FullName:      updatedProfile.FullName,
+		Bio:           updatedProfile.Bio,
+		ProfilePicURL: updatedProfile.ProfilePicURL,
+	})
 }
