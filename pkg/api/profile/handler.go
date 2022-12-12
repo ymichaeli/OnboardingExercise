@@ -18,7 +18,12 @@ func NewHandler(service profile_service.Service) Handler {
 }
 
 func (handler *Handler) GetAllProfiles(c *gin.Context) {
-	profiles := handler.service.GetAllProfiles()
+	profiles, err := handler.service.GetAllProfiles()
+
+	if err != nil {
+		_ = c.Error(err)
+		return
+	}
 
 	c.JSON(http.StatusOK, profiles)
 }
@@ -45,7 +50,13 @@ func (handler *Handler) CreateProfile(c *gin.Context) {
 		return
 	}
 
-	createdProfile := handler.service.CreateProfile(newProfile)
+	createdProfile, err := handler.service.CreateProfile(newProfile)
+
+	if err != nil {
+		_ = c.Error(err)
+		return
+	}
+
 	c.JSON(http.StatusCreated, createdProfile)
 
 }

@@ -15,7 +15,7 @@ func NewService(repository profile_repository.Repository) Service {
 	return Service{repository: repository}
 }
 
-func (service *Service) GetAllProfiles() []profile_repository.Profile {
+func (service *Service) GetAllProfiles() ([]profile_repository.Profile, error) {
 	return service.repository.GetAllProfiles()
 }
 
@@ -23,7 +23,7 @@ func (service *Service) GetProfileByUserID(userId string) (profile_repository.Pr
 	return service.repository.GetProfileByUserID(userId)
 }
 
-func (service *Service) CreateProfile(newProfile api_models.Profile) profile_repository.Profile {
+func (service *Service) CreateProfile(newProfile api_models.Profile) (profile_repository.Profile, error) {
 	profileToCreate := profile_repository.Profile{
 		UserId:        uuid.New().String(),
 		UserName:      newProfile.UserName,
@@ -32,9 +32,7 @@ func (service *Service) CreateProfile(newProfile api_models.Profile) profile_rep
 		ProfilePicURL: newProfile.ProfilePicURL,
 	}
 
-	service.repository.CreateProfile(profileToCreate)
-
-	return profileToCreate
+	return profileToCreate, service.repository.CreateProfile(profileToCreate)
 }
 
 func (service *Service) UpdateProfile(updatedProfile api_models.Profile, userId string) error {

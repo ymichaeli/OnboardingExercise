@@ -1,10 +1,15 @@
 package lifecycle_service
 
+import (
+	lifecycle_repository "OnboardingExercise/pkg/repository/lifecycle"
+)
+
 type Service struct {
+	repository lifecycle_repository.Repository
 }
 
-func NewService() Service {
-	return Service{}
+func NewService(repository lifecycle_repository.Repository) Service {
+	return Service{repository: repository}
 }
 
 func (service Service) IsAlive() bool {
@@ -12,5 +17,5 @@ func (service Service) IsAlive() bool {
 }
 
 func (service Service) IsReady() bool {
-	return true
+	return service.repository.IsReady()
 }
