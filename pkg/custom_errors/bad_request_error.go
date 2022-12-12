@@ -2,6 +2,7 @@ package custom_errors
 
 import "github.com/pkg/errors"
 
+// BadRequestError is a common error which allows us to handle it in a custom way
 type BadRequestError struct {
 	publicMessage string
 	err           string

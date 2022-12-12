@@ -2,6 +2,7 @@ package custom_errors
 
 import "github.com/pkg/errors"
 
+// NotFoundError is a common error which allows us to handle it in a custom way
 type NotFoundError struct {
 	publicMessage string
 	err           string

@@ -28,13 +28,17 @@ func HandleError(err error) (int, interface{}) {
 
 	var notFoundError custom_errors.NotFoundError
 	if errors.As(err, &notFoundError) {
-		return http.StatusNotFound, gin.H{"error": notFoundError.DisplayMessage()}
+		return handleCustomError(http.StatusNotFound, notFoundError)
 	}
 
 	var badRequestError custom_errors.BadRequestError
 	if errors.As(err, &badRequestError) {
-		return http.StatusBadRequest, gin.H{"error": badRequestError.DisplayMessage()}
+		return handleCustomError(http.StatusBadRequest, badRequestError)
 	}
 
 	return http.StatusInternalServerError, gin.H{"error": "Internal Server Error"}
+}
+
+func handleCustomError(status int, err custom_errors.CustomError) (int, interface{}) {
+	return status, gin.H{"error": err.DisplayMessage()}
 }
