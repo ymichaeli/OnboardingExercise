@@ -5,7 +5,6 @@ import (
 	"OnboardingExercise/pkg/api/lifecycle"
 	"OnboardingExercise/pkg/api/middlewares"
 	"OnboardingExercise/pkg/api/profile"
-	"OnboardingExercise/pkg/db_client"
 	lifecycle_repository "OnboardingExercise/pkg/repository/lifecycle"
 	"OnboardingExercise/pkg/repository/profile"
 	"OnboardingExercise/pkg/service/lifecycle"
@@ -22,24 +21,19 @@ type Server struct {
 }
 
 // NewServer initialize the server using gin engine and declares middleware and routes
-func NewServer() (Server, error) {
+func NewServer(db *sql.DB) Server {
 	engine := gin.New()
 	server := Server{engine}
-
-	db, err := db_client.NewDBConnection(config.GetDBConnection())
-	if err != nil {
-		return server, err
-	}
 
 	server.initMiddlewares()
 	server.initRoutes(db)
 
-	return server, nil
+	return server
 }
 
 // Start activate the server on the specified domain and port
-func (server Server) Start(domain string, port int) error {
-	return server.engine.Run(fmt.Sprintf("%s:%v", domain, port))
+func (server Server) Start(serverInfo config.ServerInfo) error {
+	return server.engine.Run(fmt.Sprintf("%s:%v", serverInfo.Host, serverInfo.Port))
 }
 
 func (server Server) initRoutes(db *sql.DB) {

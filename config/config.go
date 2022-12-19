@@ -1,21 +1,45 @@
 package config
 
-// DBConnection contains the connection details to the db
-// in production ready service, these details would be sent through environment variables
-type DBConnection struct {
-	Host     string
-	Port     int
-	User     string
-	Password string
-	DBName   string
+import (
+	"github.com/spf13/viper"
+)
+
+type DBConnectionInfo struct {
+	Host     string `mapstructure:"host"`
+	Port     int    `mapstructure:"port"`
+	User     string `mapstructure:"user"`
+	Password string `mapstructure:"password"`
+	DBName   string `mapstructure:"dbName"`
 }
 
-func GetDBConnection() DBConnection {
-	return DBConnection{
-		Host:     "localhost",
-		Port:     55000,
-		User:     "postgres",
-		Password: "Aa123456",
-		DBName:   "onboarding_db",
+type ServerInfo struct {
+	Host string `mapstructure:"host"`
+	Port int    `mapstructure:"port"`
+}
+
+type Config struct {
+	DBConfig   DBConnectionInfo `mapstructure:"dbConnectionInfo"`
+	ServerInfo ServerInfo       `mapstructure:"server"`
+}
+
+var vp *viper.Viper
+
+func LoadConfig() (Config, error) {
+	vp = viper.New()
+	var config Config
+
+	vp.SetConfigName("config")
+	vp.SetConfigType("json")
+	vp.AddConfigPath("./config")
+	vp.AutomaticEnv()
+
+	if err := vp.ReadInConfig(); err != nil {
+		return Config{}, err
 	}
+
+	if err := vp.Unmarshal(&config); err != nil {
+		return Config{}, err
+	}
+
+	return config, nil
 }

@@ -19,3 +19,8 @@ func (service Service) IsAlive() bool {
 func (service Service) IsReady() bool {
 	return service.repository.IsReady()
 }
+
+type LifecycleService interface {
+	IsAlive() bool
+	IsReady() bool
+}

@@ -55,14 +55,13 @@ func (repository *Repository) GetProfileByUserID(userId string) (Profile, error)
 	return Profile{}, custom_errors.NewNotFoundError(fmt.Sprintf("user %s does not exist", userId), "")
 }
 
-func (repository *Repository) CreateProfile(newProfile Profile) error {
-	insertQuery := `insert into profiles (user_id, username, full_name, bio, profile_pic_url) VALUES ($1, $2, $3, $4, $5)`
-	_, err := repository.client.Exec(insertQuery, newProfile.UserId, newProfile.UserName, newProfile.FullName, newProfile.Bio, newProfile.ProfilePicURL)
-	if err != nil {
-		return err
+func (repository *Repository) CreateProfile(profile Profile) (string, error) {
+	insertQuery := `insert into profiles (username, full_name, bio, profile_pic_url) VALUES ($1, $2, $3, $4) RETURNING user_id`
+	var userId string
+	if err := repository.client.QueryRow(insertQuery, profile.UserName, profile.FullName, profile.Bio, profile.ProfilePicURL).Scan(&userId); err != nil {
+		return "", err
 	}
-
-	return nil
+	return userId, nil
 }
 
 func (repository *Repository) UpdateProfile(updatedProfile Profile) error {
