@@ -8,10 +8,10 @@ import (
 
 // Handler implements service lifecycle verifications
 type Handler struct {
-	service lifecycle_service.Service
+	service lifecycle_service.LifecycleService
 }
 
-func NewHandler(service lifecycle_service.Service) Handler {
+func NewHandler(service lifecycle_service.LifecycleService) Handler {
 	return Handler{service: service}
 }
 

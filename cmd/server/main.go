@@ -1,16 +1,30 @@
 package main
 
 import (
+	"OnboardingExercise/cmd/config"
 	"OnboardingExercise/pkg/api"
+	"OnboardingExercise/pkg/db_client"
+	"fmt"
 	"github.com/pkg/errors"
 )
 
 func main() {
-	server := api.NewServer()
-	domain := "localhost"
-	port := 8080
+	configFile, err := config.LoadConfig()
+	if err != nil {
+		panic(errors.Wrap(err, "config loading failed"))
+	}
 
-	if err := server.Start(domain, port); err != nil {
+	db, err := db_client.NewDBClient(configFile.DBConfig)
+	if err != nil {
+		panic(errors.Wrap(err, "db initialized failed"))
+	}
+
+	server := api.NewServer(db)
+	if err != nil {
+		panic(fmt.Sprintf("%+v", errors.Wrap(err, "Couldn't create server")))
+	}
+
+	if err := server.Start(configFile.ServerInfo); err != nil {
 		panic(errors.Wrap(err, "Couldn't start server"))
 	}
 }
