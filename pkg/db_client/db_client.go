@@ -1,7 +1,7 @@
 package db_client
 
 import (
-	"OnboardingExercise/config"
+	"OnboardingExercise/cmd/config"
 	"database/sql"
 	"fmt"
 	_ "github.com/lib/pq"

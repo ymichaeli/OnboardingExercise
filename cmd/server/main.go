@@ -1,7 +1,7 @@
 package main
 
 import (
-	"OnboardingExercise/config"
+	"OnboardingExercise/cmd/config"
 	"OnboardingExercise/pkg/api"
 	"OnboardingExercise/pkg/db_client"
 	"fmt"

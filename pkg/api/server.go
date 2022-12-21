@@ -1,7 +1,7 @@
 package api
 
 import (
-	"OnboardingExercise/config"
+	"OnboardingExercise/cmd/config"
 	"OnboardingExercise/pkg/api/lifecycle"
 	"OnboardingExercise/pkg/api/middlewares"
 	"OnboardingExercise/pkg/api/profile"

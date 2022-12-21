@@ -1,7 +1,7 @@
 package profile_api
 
 import (
-	"OnboardingExercise/config"
+	"OnboardingExercise/cmd/config"
 	api_models "OnboardingExercise/pkg/api/models"
 	"OnboardingExercise/pkg/db_client"
 	profile_repository "OnboardingExercise/pkg/repository/profile"

@@ -5,21 +5,21 @@ import (
 )
 
 type DBConnectionInfo struct {
-	Host     string `mapstructure:"host"`
-	Port     int    `mapstructure:"port"`
-	User     string `mapstructure:"user"`
-	Password string `mapstructure:"password"`
-	DBName   string `mapstructure:"dbName"`
+	Host     string `mapstructure:"HOST"`
+	Port     int    `mapstructure:"PORT"`
+	User     string `mapstructure:"USER"`
+	Password string `mapstructure:"PASSWORD"`
+	DBName   string `mapstructure:"DB_NAME"`
 }
 
 type ServerInfo struct {
-	Host string `mapstructure:"host"`
-	Port int    `mapstructure:"port"`
+	Host string `mapstructure:"HOST"`
+	Port int    `mapstructure:"PORT"`
 }
 
 type Config struct {
-	DBConfig   DBConnectionInfo `mapstructure:"dbConnectionInfo"`
-	ServerInfo ServerInfo       `mapstructure:"server"`
+	DBConfig   DBConnectionInfo `mapstructure:"DB_CONNECTION_INFO"`
+	ServerInfo ServerInfo       `mapstructure:"SERVER"`
 }
 
 var vp *viper.Viper
