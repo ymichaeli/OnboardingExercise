@@ -1,10 +1,10 @@
 {
   "DB_CONNECTION_INFO": {
-    "HOST":     "localhost",
-    "PORT":     55000,
+    "HOST":     "172.22.0.21",
+    "PORT":     5432,
     "USER":     "postgres",
     "PASSWORD": "Aa123456",
-    "DB_NAME":   "onboarding_db"
+    "DB_NAME":   "profiles"
   },
   "SERVER": {
     "PORT": 8080,

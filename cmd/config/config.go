@@ -30,7 +30,7 @@ func LoadConfig() (Config, error) {
 
 	vp.SetConfigName("config")
 	vp.SetConfigType("json")
-	vp.AddConfigPath("./config")
+	vp.AddConfigPath("./cmd/config")
 	vp.AutomaticEnv()
 
 	if err := vp.ReadInConfig(); err != nil {
